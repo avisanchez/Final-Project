@@ -1,6 +1,8 @@
 package mydatastructs;
 
-public class MyArrayList<E> {
+import java.util.Iterator;
+
+public class MyArrayList<E> implements Iterable<E> {
     private Object[] list;
     private int capacity;
     private int size;
@@ -83,17 +85,6 @@ public class MyArrayList<E> {
         return listAsString + "]";
     }
 
-    public String toVerticalString() {
-        String listAsString = "";
-
-        for (int i = 0; i < size; i++) {
-            listAsString += list[i];
-            listAsString += i < size - 1 ? "\n" : "";
-        }
-
-        return listAsString;
-    }
-
     public int size() {
         return this.size;
     }
@@ -104,5 +95,24 @@ public class MyArrayList<E> {
 
     private boolean IndexOutOfBounds(int index) {
         return index < 0 || index >= list.length;
+    }
+
+    @Override
+    public Iterator<E> iterator() {
+        return new Iterator<E>() {
+            int index = 0;
+
+            @Override
+            public boolean hasNext() {
+                return !IndexOutOfBounds(index);
+            }
+
+            @Override
+            public E next() {
+                index++;
+                return get(index);
+            }
+
+        };
     }
 }

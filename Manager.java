@@ -1,13 +1,12 @@
-import java.util.ArrayList;
-
+import mydatastructs.*;
 import java.net.Socket;
 
 public class Manager {
 
-    private ArrayList<ServerThread> threads;
+    private MyArrayList<ServerThread> threads;
 
     public Manager() {
-        threads = new ArrayList<>();
+        threads = new MyArrayList<ServerThread>();
 
     }
 
@@ -23,6 +22,5 @@ public class Manager {
             thread.sendToClient(message);
 
         }
-
     }
 }
