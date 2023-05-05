@@ -57,6 +57,14 @@ public class Screen extends JPanel implements ActionListener {
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+
+        if (usernameField.isVisible()) {
+            g.setColor(Color.black);
+            g.fillRect(0, 0, (int) dim.getWidth(), (int) dim.getHeight());
+            g.setColor(Color.red);
+            g.setFont(new Font("serif", Font.PLAIN, 30));
+            g.drawString("Spell", 100, 100);
+        }
     }
 
     public void actionPerformed(ActionEvent ev) {
@@ -68,7 +76,8 @@ public class Screen extends JPanel implements ActionListener {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            myFrame.setTitle(usernameField.getText());
+            username = usernameField.getText();
+            myFrame.setTitle(username);
             usernameField.setVisible(false);
             enterGameButton.setVisible(false);
 
