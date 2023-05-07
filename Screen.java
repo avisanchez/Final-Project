@@ -4,7 +4,6 @@ import java.awt.geom.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
-import java.text.DecimalFormat;
 
 import mydatastructs.*;
 
@@ -20,13 +19,30 @@ public class Screen extends JPanel implements ActionListener, KeyListener {
     private String username;
 
     public final int[][] map = new int[][] {
-            { 1, 1, 1, 1, 1, 1, 1 },
-            { 1, 0, 0, 0, 0, 0, 1 },
-            { 1, 0, 1, 1, 0, 1, 1 },
-            { 1, 0, 0, 0, 0, 0, 1 },
-            { 1, 0, 1, 0, 1, 0, 1 },
-            { 1, 0, 1, 0, 1, 0, 1 },
-            { 1, 1, 1, 1, 1, 1, 1 }
+            { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+            { 1, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 3, 0, 3, 0, 3, 0, 0, 0, 1 },
+            { 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+            { 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 1 },
+            { 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+            { 1, 0, 0, 0, 0, 0, 2, 2, 0, 2, 2, 0, 0, 0, 0, 3, 0, 3, 0, 3, 0, 0, 0, 1 },
+            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+            { 1, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+            { 1, 4, 0, 4, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+            { 1, 4, 0, 0, 0, 0, 5, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+            { 1, 4, 0, 4, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+            { 1, 4, 0, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+            { 1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+            { 1, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+            { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
     };
 
     private final int CELL_SIZE = 32;
@@ -83,29 +99,33 @@ public class Screen extends JPanel implements ActionListener, KeyListener {
             usernameField.setBounds(getCenteredX(150), getCenteredY(30), 150, 30);
             enterGameButton.setBounds(getCenteredX(150), getCenteredY(30) + 40, 150, 30);
 
+            // color background black
             g.setColor(Color.black);
             g.fillRect(0, 0, this.getWidth(), this.getHeight());
+
             g.setColor(Color.red);
             g.setFont(new Font("serif", Font.PLAIN, 30));
             g.drawString("Spellcaster 3D", 100, 100);
             return;
         }
 
-        renderMinimap(g);
+        renderWorld(g);
+        // renderMinimap(g);
 
-        DecimalFormat d = new DecimalFormat("#.##");
-        g.drawString("Player angle rads: " + d.format(player.angle), getWidth() - 300, 20);
-        g.drawString("Player angle degs: " + d.format(Math.toDegrees(player.angle)), getWidth() - 300, 40);
+    }
 
-        for (int i = -5; i <= 5; i++) {
-            castRay(g, player.worldPos.x, player.worldPos.y, player.angle + i * Math.PI / 50);
+    public void renderWorld(Graphics g) {
+        for (int x = 0; x <= getWidth(); x++) {
+            double cameraX = 2 * x / (double) getWidth() - 1;
+            Vector3 dir = player.cameraPlane.mult(cameraX).add(player.dir);
+
+            castRay(g, player.worldPos.x, player.worldPos.y, dir, x);
         }
-
     }
 
     public void renderMinimap(Graphics g) {
         int cellSize = (int) (MINIMAP_SCALE * CELL_SIZE);
-        int playerRadius = (int) (MINIMAP_SCALE * player.radius2D);
+        int playerRadius = (int) (MINIMAP_SCALE * 5);
 
         // render cells
         for (int row = 0; row < map[0].length; row++) {
@@ -135,6 +155,18 @@ public class Screen extends JPanel implements ActionListener, KeyListener {
         g.setColor(Color.red);
         g.fillOval(playerX - playerRadius, playerY - playerRadius, playerRadius * 2, playerRadius * 2);
 
+        // render camera
+        int lineLength = (int) (10 * MINIMAP_SCALE);
+
+        int endCameraX1 = playerX + (int) (player.dir.x * lineLength) + (int) (player.cameraPlane.x * lineLength);
+        int endCameraY1 = playerY + (int) (player.dir.y * lineLength) + (int) (player.cameraPlane.y * lineLength);
+
+        int endCameraX2 = playerX + (int) (player.dir.x * lineLength) - (int) (player.cameraPlane.x * lineLength);
+        int endCameraY2 = playerY + (int) (player.dir.y * lineLength) - (int) (player.cameraPlane.y * lineLength);
+
+        g.drawOval(endCameraX1 - 2, endCameraY1 - 2, 4, 4);
+        g.drawOval(endCameraX2 - 2, endCameraY2 - 2, 4, 4);
+
     }
 
     /**
@@ -145,64 +177,66 @@ public class Screen extends JPanel implements ActionListener, KeyListener {
      * 
      * @param rayAngle the angle of the ray in radians
      */
-    public void castRay(Graphics g, double x, double y, double rayAngle) {
+    public void castRay(Graphics g, double startX, double startY, Vector3 dir, int x) {
 
-        // world coordinates of ray starting point
-        Vector3 rayOrigin = new Vector3(x, y, 0);
+        // world coordinates of ray starting position
+        Vector3 rayOrigin = new Vector3(startX, startY, 0);
 
-        // normalized ray direction based on player angle
-        Vector3 rayDir = new Vector3(Math.cos(rayAngle), -Math.sin(rayAngle), 0);
+        // normalized ray direction
+        Vector3 rayDir = dir;
 
         // ray unit step size
         Vector3 unitStepSize = new Vector3(Math.abs(1.0f / rayDir.x), Math.abs(1.0f / rayDir.y), 0);
 
         // x and y direction algorithm will step in
-        Vector3 stepDir = new Vector3();
+        Vector3 step = new Vector3();
 
         // current length of ray
         Vector3 rayLength = new Vector3();
 
-        // integer map coordinates
+        // truncated map coordinates
         Vector3 mapCheck = new Vector3((int) rayOrigin.x, (int) rayOrigin.y, 0);
 
         // starting conditions
         if (rayDir.x > 0) {
-            stepDir.x = 1;
-            rayLength.x = ((mapCheck.x + 1) - rayOrigin.x) * unitStepSize.x;
+            step.x = 1;
+            rayLength.x = (mapCheck.x + 1 - rayOrigin.x) * unitStepSize.x;
 
         } else {
-            stepDir.x = -1;
+            step.x = -1;
             rayLength.x = (rayOrigin.x - mapCheck.x) * unitStepSize.x;
 
         }
 
         if (rayDir.y > 0) {
-            stepDir.y = 1;
-            rayLength.y = ((mapCheck.y + 1) - rayOrigin.y) * unitStepSize.y;
+            step.y = 1;
+            rayLength.y = (mapCheck.y + 1 - rayOrigin.y) * unitStepSize.y;
 
         } else {
-            stepDir.y = -1;
+            step.y = -1;
             rayLength.y = (rayOrigin.y - mapCheck.y) * unitStepSize.y;
 
         }
 
         // run algorithm
+        boolean hitDetected = false;
+        double maxWorldDist = map.length; // max distance algorithm will check
+        double worldDist = 0;
+        int side = -1;
 
-        boolean collisionDetected = false;
-        double maxWorldDistance = 10; // max distance algorithm will check
-        double worldDistance = 0;
-
-        while (!collisionDetected && worldDistance < maxWorldDistance) {
+        while (!hitDetected && worldDist < maxWorldDist) {
 
             if (rayLength.x < rayLength.y) {
-                mapCheck.x += stepDir.x;
-                worldDistance = rayLength.x;
+                mapCheck.x += step.x;
+                worldDist = rayLength.x;
                 rayLength.x += unitStepSize.x;
+                side = 0;
 
             } else {
-                mapCheck.y += stepDir.y;
-                worldDistance = rayLength.y;
+                mapCheck.y += step.y;
+                worldDist = rayLength.y;
                 rayLength.y += unitStepSize.y;
+                side = 1;
 
             }
 
@@ -210,31 +244,73 @@ public class Screen extends JPanel implements ActionListener, KeyListener {
             int col = (int) mapCheck.x;
 
             if (col >= 0 && col < map[0].length && row >= 0 && row < map.length) {
-                if (map[row][col] == 1) {
-                    collisionDetected = true;
+                if (map[row][col] >= 1) {
+                    hitDetected = true;
 
                 }
             }
         }
 
-        if (collisionDetected) {
+        if (hitDetected) {
             // visualize ray and collision
-            double worldIntersectionX = player.worldPos.x + rayDir.x * worldDistance;
-            double worldIntersectionY = player.worldPos.y + rayDir.y * worldDistance;
+            // double worldHitX = rayOrigin.x + rayDir.x * worldDist;
+            // double worldHitY = rayOrigin.y + rayDir.y * worldDist;
 
-            double screenIntersectionX = worldIntersectionX * CELL_SIZE * MINIMAP_SCALE;
-            double screenIntersectionY = worldIntersectionY * CELL_SIZE * MINIMAP_SCALE;
+            // double screenHitX = worldHitX * CELL_SIZE * MINIMAP_SCALE;
+            // double screenHitY = worldHitY * CELL_SIZE * MINIMAP_SCALE;
 
-            double screenOriginX = rayOrigin.x * CELL_SIZE * MINIMAP_SCALE;
-            double screenOriginY = rayOrigin.y * CELL_SIZE * MINIMAP_SCALE;
+            // double screenOriginX = rayOrigin.x * CELL_SIZE * MINIMAP_SCALE;
+            // double screenOriginY = rayOrigin.y * CELL_SIZE * MINIMAP_SCALE;
 
-            Line2D connectingLine = new Line2D.Double(screenOriginX, screenOriginY, screenIntersectionX,
-                    screenIntersectionY);
-            Ellipse2D intersectionPoint = new Ellipse2D.Double(screenIntersectionX - 1, screenIntersectionY - 1, 2, 2);
+            // Line2D line = new Line2D.Double(screenOriginX, screenOriginY, screenHitX,
+            // screenHitY);
+            // Ellipse2D point = new Ellipse2D.Double(screenHitX - 1, screenHitY - 1, 2, 2);
 
-            Graphics2D g2 = (Graphics2D) g;
-            g2.draw(connectingLine);
-            g2.fill(intersectionPoint);
+            // Graphics2D g2 = (Graphics2D) g;
+            // g2.draw(line);
+            // g2.fill(point);
+
+            double perpWallDist;
+            if (side == 0) {
+                perpWallDist = rayLength.x - unitStepSize.x;
+            } else {
+                perpWallDist = rayLength.y - unitStepSize.y;
+            }
+
+            int lineHeight = (int) (getHeight() / (perpWallDist));
+            int drawStart = -lineHeight / 2 + getHeight() / 2;
+            if (drawStart < 0) {
+                drawStart = 0;
+            }
+            int drawEnd = lineHeight / 2 + getHeight() / 2;
+            if (drawEnd >= getHeight()) {
+                drawEnd = getHeight() - 1;
+            }
+
+            switch (map[(int) mapCheck.y][(int) mapCheck.x]) {
+                case 1:
+                    g.setColor(Color.red);
+                    ;
+                    break; // red
+                case 2:
+                    g.setColor(Color.green);
+                    break; // green
+                case 3:
+                    g.setColor(Color.blue);
+                    break; // blue
+                case 4:
+                    g.setColor(Color.white);
+                    break; // white
+                default:
+                    g.setColor(Color.yellow);
+                    break; // yellow
+            }
+
+            if (side == 1) {
+                g.setColor(new Color(g.getColor().getRed(), g.getColor().getGreen(), g.getColor().getBlue(), 150));
+            }
+
+            g.drawLine(x, drawStart, x, drawEnd);
 
         }
 
@@ -281,7 +357,7 @@ public class Screen extends JPanel implements ActionListener, KeyListener {
     }
 
     public Dimension getPreferredSize() {
-        return new Dimension(800, 800);
+        return new Dimension(800, 600);
     }
 
     public void keyPressed(KeyEvent e) {
@@ -294,12 +370,25 @@ public class Screen extends JPanel implements ActionListener, KeyListener {
             player.turn(Math.PI / 24);
 
         } else if (keyCode == KeyEvent.VK_W) {
-            player.move(1.0 / map.length);
+            player.move(0.5);
 
         } else if (keyCode == KeyEvent.VK_S) {
-            player.move(-1.0 / map.length);
+            player.move(-0.5);
+
+        } else if (keyCode == KeyEvent.VK_UP) {
+            player.dir = player.dir.mult(1.1);
+
+        } else if (keyCode == KeyEvent.VK_DOWN) {
+            player.dir = player.dir.mult(0.9);
+
+        } else if (keyCode == KeyEvent.VK_LEFT) {
+            player.cameraPlane = player.cameraPlane.mult(1.1);
+
+        } else if (keyCode == KeyEvent.VK_RIGHT) {
+            player.cameraPlane = player.cameraPlane.mult(0.9);
 
         }
+
         repaint();
     }
 

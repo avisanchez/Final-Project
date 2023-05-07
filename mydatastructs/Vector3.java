@@ -27,92 +27,64 @@ public class Vector3 extends VECTOR_CONSTANTS {
      * Add Methods
      */
 
-    public void add(Vector3 v) {
-        this.x += v.x;
-        this.y += v.y;
-        this.z += v.z;
+    public Vector3 add(Vector3 v) {
+        return new Vector3(x + v.x, y + v.y, z + v.z);
     }
 
-    public void add(double x, double y, double z) {
-        this.x += x;
-        this.y += y;
-        this.z += z;
+    public Vector3 add(double x, double y, double z) {
+        return new Vector3(this.x + x, this.y + y, this.z + z);
     }
 
-    public void add(double num) {
-        this.x += num;
-        this.y += num;
-        this.z += num;
+    public Vector3 add(double val) {
+        return new Vector3(x + val, y + val, z + val);
     }
 
     /*
      * subtracttract
      */
 
-    public void subtract(Vector3 v) {
-        this.x -= v.x;
-        this.y -= v.y;
-        this.z -= v.z;
+    public Vector3 sub(Vector3 v) {
+        return new Vector3(x - v.x, y - v.y, z - v.z);
     }
 
-    public Vector3 subtract(Vector3 v1, Vector3 v2) {
-        return new Vector3(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
+    public Vector3 sub(double x, double y, double z) {
+        return new Vector3(this.x - x, this.y - y, this.z - z);
     }
 
-    public void subtract(double x, double y, double z) {
-        this.x -= x;
-        this.y -= y;
-        this.z -= z;
-    }
-
-    public void subtract(double num) {
-        this.x -= num;
-        this.y -= num;
-        this.z -= num;
+    public Vector3 sub(double val) {
+        return new Vector3(x - val, y - val, z - val);
     }
 
     /*
      * multiplyiply Methods
      */
 
-    public void multiply(Vector3 v) {
-        this.x *= v.x;
-        this.y *= v.y;
-        this.z *= v.z;
+    public Vector3 mult(Vector3 v) {
+        return new Vector3(x * v.x, y * v.y, z * v.z);
     }
 
-    public void multiply(double x, double y, double z) {
-        this.x *= x;
-        this.y *= y;
-        this.z *= z;
+    public Vector3 mult(double x, double y, double z) {
+        return new Vector3(this.x * x, this.y * y, this.z * z);
     }
 
-    public void multiply(double num) {
-        this.x *= num;
-        this.y *= num;
-        this.z *= num;
+    public Vector3 mult(double val) {
+        return new Vector3(x * val, y * val, z * val);
     }
 
     /*
      * divideide methods
      */
 
-    public void divide(Vector3 v) {
-        this.x /= v.x;
-        this.y /= v.y;
-        this.z /= v.z;
+    public Vector3 div(Vector3 v) {
+        return new Vector3(x / v.x, y / v.y, z / v.z);
     }
 
-    public void divide(double x, double y, double z) {
-        this.x /= x;
-        this.y /= y;
-        this.z /= z;
+    public Vector3 div(double x, double y, double z) {
+        return new Vector3(this.x / x, this.y / y, this.z / z);
     }
 
-    public void divide(double num) {
-        this.x /= num;
-        this.y /= num;
-        this.z /= num;
+    public Vector3 div(double val) {
+        return new Vector3(x / val, y / val, z / val);
     }
 
     /*
@@ -127,11 +99,11 @@ public class Vector3 extends VECTOR_CONSTANTS {
      * Magnitude Math
      */
 
-    public double magnitude() {
+    public double mag() {
         return Math.sqrt(x * x + y * y + z * z);
     }
 
-    public double sqrMagnitude() {
+    public double sqrMag() {
         return x * x + y * y + z * z;
     }
 
@@ -139,7 +111,7 @@ public class Vector3 extends VECTOR_CONSTANTS {
      * Distance methods
      */
 
-    public static double distance(Vector3 v1, Vector3 v2) {
+    public static double dist(Vector3 v1, Vector3 v2) {
         double x = v1.x - v2.x;
         double y = v1.y - v2.y;
         double z = v1.z - v2.z;
@@ -150,12 +122,8 @@ public class Vector3 extends VECTOR_CONSTANTS {
      * Normalize Method
      */
 
-    public void normalize() {
-        this.divide(magnitude());
-    }
-
-    public Vector3 normalized() {
-        double mag = magnitude();
+    public Vector3 norm() {
+        double mag = mag();
         return new Vector3(x / mag, y / mag, z / mag);
     }
 

@@ -2,28 +2,30 @@ import mydatastructs.*;
 
 public class Player {
     public Vector3 worldPos;
-    public double angle;
-
-    public int radius2D;
+    public Vector3 dir;
+    public Vector3 cameraPlane;
 
     public Player(double worldX, double worldY) {
         worldPos = new Vector3(worldX, worldY, 0);
-        angle = Math.PI / 2;
-        radius2D = 5;
+        dir = new Vector3(-1, 0, 0);
+        cameraPlane = new Vector3(0, 0.66, 0);
     }
 
     /**
-     * Rotates player angle by a certain number of radians
+     * Rotates player direction and camera plane by rotation matrix
      * 
      * @param rads the number of radians to turn the player by
      * 
      */
     public void turn(double rads) {
-        angle += rads;
-        if (angle < 0) {
-            angle = 2 * Math.PI + angle;
-        }
-        angle %= 2 * Math.PI;
+        double newDirX = dir.x * Math.cos(rads) - dir.y * Math.sin(rads);
+        double newDirY = dir.x * Math.sin(rads) + dir.y * Math.cos(rads);
+        dir = new Vector3(newDirX, newDirY, 0);
+
+        double newCameraPlaneX = cameraPlane.x * Math.cos(rads) - cameraPlane.y * Math.sin(rads);
+        double newCameraPlaneY = cameraPlane.x * Math.sin(rads) + cameraPlane.y * Math.cos(rads);
+        cameraPlane = new Vector3(newCameraPlaneX, newCameraPlaneY, 0);
+
     }
 
     /**
@@ -35,10 +37,7 @@ public class Player {
      * 
      */
     public void move(double stepSize) {
-        double dx = stepSize * Math.cos(angle);
-        double dy = stepSize * Math.sin(angle);
-
-        worldPos.x += dx;
-        worldPos.y -= dy;
+        worldPos.x += stepSize * dir.norm().x;
+        worldPos.y += stepSize * dir.norm().y;
     }
 }
