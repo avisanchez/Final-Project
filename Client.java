@@ -16,7 +16,9 @@ public class Client {
             fr.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             fr.pack();
             fr.setVisible(true);
+            fr.setResizable(false);
 
+            sc.animate();
             sc.poll();
 
             // close this window without affecting other clients
