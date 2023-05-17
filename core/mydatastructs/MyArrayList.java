@@ -1,4 +1,4 @@
-package mydatastructs;
+package core.mydatastructs;
 
 import java.util.Iterator;
 

@@ -1,4 +1,4 @@
-package mydatastructs;
+package core.mydatastructs;
 
 public class VECTOR_CONSTANTS {
     public static final Vector3 UP = new Vector3(0, -1, 0);

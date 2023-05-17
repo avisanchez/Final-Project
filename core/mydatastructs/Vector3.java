@@ -1,4 +1,6 @@
-package mydatastructs;
+package core.mydatastructs;
+
+import java.awt.Graphics;
 
 public class Vector3 extends VECTOR_CONSTANTS {
     public double x, y, z;
@@ -118,6 +120,13 @@ public class Vector3 extends VECTOR_CONSTANTS {
         return Math.sqrt(x * x + y * y + z * z);
     }
 
+    public static double sqrDist(Vector3 v1, Vector3 v2) {
+        double x = v1.x - v2.x;
+        double y = v1.y - v2.y;
+        double z = v1.z - v2.z;
+        return x * x + y * y + z * z;
+    }
+
     /*
      * Normalize Method
      */
@@ -137,6 +146,10 @@ public class Vector3 extends VECTOR_CONSTANTS {
 
     public boolean equals(Vector3 v) {
         return this.x == v.x && this.y == v.y && this.z == v.z;
+    }
+
+    public static void drawLine2D(Graphics g, Vector3 v1, Vector3 v2) {
+        g.drawLine((int) v1.x, (int) v1.y, (int) v2.x, (int) v2.y);
     }
 
     /*

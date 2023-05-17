@@ -1,4 +1,6 @@
 import javax.swing.*;
+
+import java.awt.Color;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
@@ -11,12 +13,14 @@ public class Client {
             Socket server = new Socket(hostName, port);
 
             JFrame fr = new JFrame("Client");
-            Screen sc = new Screen(server, fr);
+            Screen sc = new Screen(server);
             fr.add(sc);
             fr.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             fr.pack();
             fr.setVisible(true);
             fr.setResizable(false);
+
+            sc.setBackground(Color.black);
 
             sc.animate();
             sc.poll();

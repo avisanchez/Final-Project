@@ -1,8 +1,8 @@
-import mydatastructs.*;
+import core.ObjectManager;
+import core.mydatastructs.*;
 import java.net.Socket;
 
 public class Manager {
-
     private MyArrayList<ServerThread> threads;
 
     public Manager() {
