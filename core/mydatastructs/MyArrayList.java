@@ -1,8 +1,9 @@
 package core.mydatastructs;
 
+import java.io.Serializable;
 import java.util.Iterator;
 
-public class MyArrayList<E> implements Iterable<E> {
+public class MyArrayList<E> implements Iterable<E>, Serializable {
     private Object[] list;
     private int capacity;
     private int size;
@@ -41,6 +42,26 @@ public class MyArrayList<E> implements Iterable<E> {
     }
 
     @SuppressWarnings("unchecked")
+    public E get(E element) {
+        for (int i = 0; i < size; i++) {
+            if (((E) list[i]).equals(element)) {
+                return (E) list[i];
+            }
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public int indexOf(E element) {
+        for (int i = 0; i < size; i++) {
+            if (((E) list[i]).equals(element)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    @SuppressWarnings("unchecked")
     public E remove(int index) {
         if (index >= 0 && index < size) {
             E removedElement = (E) list[index];
@@ -51,6 +72,18 @@ public class MyArrayList<E> implements Iterable<E> {
             return removedElement;
         }
         return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public void remove(E element) {
+        for (int i = 0; i < size; i++) {
+            E curr = (E) list[i];
+
+            if (curr.equals(element)) {
+                remove(i);
+                break;
+            }
+        }
     }
 
     public void set(int index, E newElement) {
@@ -85,6 +118,16 @@ public class MyArrayList<E> implements Iterable<E> {
         return listAsString + "]";
     }
 
+    @SuppressWarnings("unchecked")
+    public MyArrayList<E> copy() {
+        MyArrayList<E> copy = new MyArrayList<>();
+
+        for (int i = 0; i < this.size; i++) {
+            copy.add((E) list[i]);
+        }
+        return copy;
+    }
+
     public int size() {
         return this.size;
     }
@@ -104,13 +147,14 @@ public class MyArrayList<E> implements Iterable<E> {
 
             @Override
             public boolean hasNext() {
-                return !IndexOutOfBounds(index);
+                return index < size;
             }
 
             @Override
             public E next() {
+                E data = get(index);
                 index++;
-                return get(index);
+                return data;
             }
 
         };

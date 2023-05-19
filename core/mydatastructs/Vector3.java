@@ -1,8 +1,9 @@
 package core.mydatastructs;
 
 import java.awt.Graphics;
+import java.io.Serializable;
 
-public class Vector3 extends VECTOR_CONSTANTS {
+public class Vector3 implements Serializable {
     public double x, y, z;
 
     public Vector3(double x, double y, double z) {
@@ -164,6 +165,6 @@ public class Vector3 extends VECTOR_CONSTANTS {
         String component = "%." + numSigFigs + "f";
         String components = component + ", " + component + ", " + component;
 
-        return String.format("Vector3[" + components + "]", this.x, this.y, this.z);
+        return String.format("(" + components + ")", this.x, this.y, this.z);
     }
 }

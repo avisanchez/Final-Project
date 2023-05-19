@@ -7,15 +7,14 @@ import core.mydatastructs.*;
 import core.gameobjects.*;
 
 public class Renderer {
-    private ObjectManager objectManager;
-
     private double[] zBuffer;
     private int[][] pixelBuffer;
     private Player player;
+    private ObjectManager objectManager;
 
     public Renderer(Player player, ObjectManager objectManager) {
-        this.objectManager = objectManager;
         this.player = player;
+        this.objectManager = objectManager;
         pixelBuffer = new int[Settings.SCREEN_HEIGHT][Settings.SCREEN_WIDTH];
         zBuffer = new double[Settings.SCREEN_WIDTH];
 
@@ -34,7 +33,7 @@ public class Renderer {
         }
     }
 
-    public void update() {
+    public void update(MyArrayList<Player> sortedPlayers) {
         // clear buffers
         pixelBuffer = new int[Settings.SCREEN_HEIGHT][Settings.SCREEN_WIDTH];
         zBuffer = new double[Settings.SCREEN_WIDTH];
@@ -47,16 +46,16 @@ public class Renderer {
             castRay(player.worldPos.x, player.worldPos.y, dir, x);
         }
 
-        renderSprites(objectManager.getSortedSprites(player));
+        renderPlayers(sortedPlayers);
 
     }
 
-    private void renderSprites(Sprite[] sortedSprites) {
-        for (int i = 0; i < sortedSprites.length; i++) {
-            Sprite currSprite = sortedSprites[i];
+    private void renderPlayers(MyArrayList<Player> sortedObjects) {
 
-            double spriteX = currSprite.worldPos.x - player.worldPos.x;
-            double spriteY = currSprite.worldPos.y - player.worldPos.y;
+        for (Player gameObject : sortedObjects) {
+
+            double spriteX = gameObject.worldPos.x - player.worldPos.x;
+            double spriteY = gameObject.worldPos.y - player.worldPos.y;
 
             double invDet = 1.0 / (player.cameraPlane.x * player.dir.y - player.dir.x *
                     player.cameraPlane.y);
@@ -110,7 +109,7 @@ public class Renderer {
                                 * 128;
                         int texY = ((d * Settings.TEXTURE_HEIGHT) / spriteHeight) / 256;
 
-                        int color = objectManager.getTexture(currSprite.textureNum)[Settings.TEXTURE_WIDTH * texX
+                        int color = objectManager.getTexture(gameObject.textureNum)[Settings.TEXTURE_WIDTH * texX
                                 + texY];
 
                         if ((color & 0x00FFFFFF) != 0)

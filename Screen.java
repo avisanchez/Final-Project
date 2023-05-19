@@ -3,13 +3,12 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
+import java.util.UUID;
 
-import core.MapManager;
-import core.ObjectManager;
+import core.*;
 import core.Renderer;
 import core.gameobjects.Player;
-import core.mydatastructs.Message;
-import core.Settings;
+import core.mydatastructs.*;
 
 public class Screen extends JPanel implements ActionListener, KeyListener {
 
@@ -22,21 +21,26 @@ public class Screen extends JPanel implements ActionListener, KeyListener {
     private JButton enterGameButton;
 
     // game objects
-    private ObjectManager objectManager;
+    private Game game;
     private Renderer renderer;
-    private Player player;
+    private ObjectManager objectManager;
+
+    private Player currentPlayer;
+    private MyArrayList<Player> otherPlayers;
+
     private int maxFPS, turning, moving;
     private double deltaTime, startTime;
 
     private String username;
 
     public Screen(Socket server) {
-        ObjectManager objectManager = new ObjectManager();
-        player = new Player(1.5, 1.5);
-        renderer = new Renderer(player, objectManager);
+        objectManager = new ObjectManager();
+
         maxFPS = 0;
         turning = moving = 0;
-        deltaTime = startTime = 0;
+        startTime = deltaTime = 0;
+
+        otherPlayers = new MyArrayList<>();
 
         username = null;
 
@@ -70,74 +74,105 @@ public class Screen extends JPanel implements ActionListener, KeyListener {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        // update delta time
-        deltaTime = (System.currentTimeMillis() - startTime) / 1000.0;
-        startTime = System.currentTimeMillis();
-
         if (username == null) {
             drawTitleScreen(g);
             return;
         }
 
-        // move player
-        if (turning != 0) {
-            player.turn(turning * Math.PI / 1.5 * deltaTime);
-        }
-        if (moving != 0) {
-            player.move(moving * 2.5 * deltaTime);
-        }
-
-        renderer.update();
-        renderer.render(g);
+        // update delta time
+        deltaTime = (System.currentTimeMillis() - startTime) / 1000.0;
+        startTime = System.currentTimeMillis();
 
         // update fps
         int fps = (int) (1.0 / deltaTime);
-
-        // draw fps
-        g.setColor(Color.RED);
-        g.drawString("FPS: " + fps, 10, 20);
 
         // calculate max fps
         if (fps > maxFPS) {
             maxFPS = fps;
         }
 
-    }
-
-    public void animate() {
-        while (true) {
-            // run at around 60 fps
-            try {
-                Thread.sleep((long) 16.66);
-
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            repaint();
+        // move player
+        if (turning != 0) {
+            currentPlayer.turn(turning * Math.PI / 1.5 * deltaTime);
 
         }
+        if (moving != 0) {
+            currentPlayer.move(moving * 2.5 * deltaTime);
+
+        }
+
+        // update player coordinates in object manager
+        if (turning != 0 || moving != 0) {
+            try {
+                out.reset();
+                out.writeObject(new Message(Message.Tag.UPDATE_PLAYER, currentPlayer));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (renderer != null) {
+            renderer.update(objectManager.getSortedPlayers(currentPlayer, otherPlayers));
+            renderer.render(g);
+            MapManager.drawMinimap(g, currentPlayer, otherPlayers);
+        }
+
+        // draw fps
+        g.setColor(Color.RED);
+        g.drawString("FPS: " + fps, 10, 20);
+
     }
 
     // -----------------------------------
     // -------- Network Listener ---------
     // -----------------------------------
     public void poll() {
-        while (true) {
-            try {
+        try {
+            while (true) {
+
                 Message message = (Message) in.readObject();
 
                 switch (message.tag) {
+                    case CREATE_PLAYER:
+                        Player newPlayer = (Player) message.getData();
+                        otherPlayers.add(newPlayer.copy());
+
+                        System.out.println("other players: " + otherPlayers.toString());
+                        break;
+                    case ASSIGN_PLAYER:
+                        UUID id = (UUID) message.getData();
+                        Player tempPlayer = new Player(id, 0, 0, 0);
+                        currentPlayer = otherPlayers.get(tempPlayer).copy();
+                        otherPlayers.remove(tempPlayer);
+
+                        renderer = new Renderer(currentPlayer, objectManager);
+
+                        System.out.println("player: " + currentPlayer);
+                        System.out.println("other players: " + otherPlayers);
+                        break;
+                    case UPDATE_PLAYER:
+                        System.out.println("updated player");
+                        System.out.println("other players size: " + otherPlayers.size());
+                        Player updatedPlayer = (Player) message.getData();
+                        for (int i = 0; i < otherPlayers.size(); i++) {
+
+                            if (otherPlayers.get(i).equals(updatedPlayer)) {
+                                System.out.println("player found");
+                                otherPlayers.set(i, updatedPlayer.copy());
+                                break;
+                            }
+                        }
+                        break;
                     default:
                         break;
                 }
-
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
     }
 
     // -----------------------------------
@@ -148,11 +183,6 @@ public class Screen extends JPanel implements ActionListener, KeyListener {
         Object source = ev.getSource();
 
         if (source == enterGameButton) {
-            try {
-                out.writeObject(new Message(Message.Tag.READY_TO_PLAY));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
             username = usernameField.getText();
             usernameField.setVisible(false);
             enterGameButton.setVisible(false);
@@ -180,21 +210,24 @@ public class Screen extends JPanel implements ActionListener, KeyListener {
 
         } else if (keyCode == KeyEvent.VK_S) {
             moving = -1;
+        }
 
-        } else if (keyCode == KeyEvent.VK_UP) {
-            player.dir = player.dir.mult(1.1);
+        // } else if (keyCode == KeyEvent.VK_UP) {
+        // player.dir = player.dir.mult(1.1);
 
-        } else if (keyCode == KeyEvent.VK_DOWN) {
-            player.dir = player.dir.mult(0.9);
+        // } else if (keyCode == KeyEvent.VK_DOWN) {
+        // player.dir = player.dir.mult(0.9);
 
-        } else if (keyCode == KeyEvent.VK_LEFT) {
-            player.cameraPlane = player.cameraPlane.mult(1.1);
+        // } else if (keyCode == KeyEvent.VK_LEFT) {
+        // player.cameraPlane = player.cameraPlane.mult(1.1);
 
-        } else if (keyCode == KeyEvent.VK_RIGHT) {
-            player.cameraPlane = player.cameraPlane.mult(0.9);
+        // } else if (keyCode == KeyEvent.VK_RIGHT) {
+        // player.cameraPlane = player.cameraPlane.mult(0.9);
 
-        } else if (keyCode == KeyEvent.VK_SPACE) {
+        // }
+        else if (keyCode == KeyEvent.VK_SPACE) {
             System.out.println("Max FPS: " + maxFPS);
+
         }
 
         repaint();

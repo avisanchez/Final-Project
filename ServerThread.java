@@ -1,5 +1,7 @@
 import java.net.*;
 import java.io.*;
+
+import core.gameobjects.Player;
 import core.mydatastructs.*;
 
 public class ServerThread implements Runnable {
@@ -24,11 +26,18 @@ public class ServerThread implements Runnable {
         // Receive new messages from client
         try {
             while (true) {
+
+                if (Thread.interrupted()) {
+                    break;
+                }
+
                 Message message = (Message) in.readObject();
 
                 switch (message.tag) {
-                    case READY_TO_PLAY:
+                    case UPDATE_PLAYER:
+                        manager.broadcastMessage(message);
                         break;
+
                     default:
                         break;
                 }
@@ -41,7 +50,19 @@ public class ServerThread implements Runnable {
         } catch (ClassNotFoundException ex) {
             System.out.println("ERROR: Failed to identify class from client.");
             ex.printStackTrace();
+
         }
+
+        System.out.println(Thread.currentThread().getName() + ": connection closed.");
+
+        // close streams
+        try {
+            in.close();
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**
@@ -52,11 +73,10 @@ public class ServerThread implements Runnable {
      */
     public void sendToClient(Message message) {
         try {
-            out.flush();
+            out.reset();
             out.writeObject(message);
 
         } catch (IOException e) {
-            System.out.println("DEBUG: Error sending message to client");
             e.printStackTrace();
         }
     }

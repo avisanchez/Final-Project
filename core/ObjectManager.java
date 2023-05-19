@@ -3,19 +3,19 @@ package core;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
+
 import javax.imageio.ImageIO;
 
 import core.mydatastructs.*;
 import core.gameobjects.*;
 
-public class ObjectManager {
+public class ObjectManager implements Serializable {
 
-    private int[][] textures;
-    private Sprite[] sprites;
+    private static int[][] textures;
 
     public ObjectManager() {
         textures = new int[9][Settings.TEXTURE_WIDTH * Settings.TEXTURE_HEIGHT];
-        sprites = new Sprite[] { new Sprite(6.5, 2.5, 8) };
 
         // load textures
         try {
@@ -37,31 +37,30 @@ public class ObjectManager {
     }
 
     public int[] getTexture(int textureNum) {
-        if (textureNum < 0 || textureNum > MapManager.worldMap.length) {
+        if (textureNum < 0 || textureNum > textures.length) {
             System.out.println("Error: texture " + textureNum + " not detected");
         }
         return textures[textureNum];
     }
 
-    public Sprite[] getSortedSprites(Player player) {
-        Sprite[] sortedSprites = sprites.clone();
+    public MyArrayList<Player> getSortedPlayers(Player player, MyArrayList<Player> otherPlayers) {
+        MyArrayList<Player> sortedPlayer = otherPlayers.copy();
 
-        for (int i = 0; i < sortedSprites.length; i++) {
-            for (int j = 1; j < (sortedSprites.length - i); j++) {
-                Sprite currSprite = sortedSprites[j];
-                Sprite nextSprite = sortedSprites[j - 1];
+        // sort the other players relative to this one
+        for (int i = 0; i < sortedPlayer.size() - 1; i++) {
+            for (int j = 0; j < sortedPlayer.size() - i - 1; j++) {
+                GameObject currSprite = sortedPlayer.get(j);
+                GameObject nextSprite = sortedPlayer.get(j + 1);
 
                 double currDist = Vector3.sqrDist(player.worldPos, currSprite.worldPos);
                 double nextDist = Vector3.sqrDist(player.worldPos, nextSprite.worldPos);
                 if (nextDist > currDist) {
-                    Sprite temp = sortedSprites[j];
-                    sortedSprites[j] = sortedSprites[j + 1];
-                    sortedSprites[j + 1] = temp;
+                    sortedPlayer.swap(j, j + 1);
                 }
             }
         }
 
-        return sortedSprites;
+        return sortedPlayer;
     }
 
     private void loadTexture(int index, File file) throws IOException {

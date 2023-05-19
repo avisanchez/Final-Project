@@ -9,8 +9,8 @@ public class Message implements Serializable {
     private Serializable data;
 
     public Message(Tag tag, String metadata, Serializable data) {
-        this.metadata = metadata;
         this.tag = tag;
+        this.metadata = metadata;
         this.data = data;
     }
 
@@ -32,18 +32,20 @@ public class Message implements Serializable {
 
     // specific states of a certain Type
     public enum Tag {
-        READY_TO_PLAY(Type.PLAYER);
+        CREATE_PLAYER,
+        ASSIGN_PLAYER,
+        UPDATE_PLAYER,
 
-        public Type type;
+        // public Type type;
 
-        private Tag(Type type) {
-            this.type = type;
-        }
+        // private Tag(Type type) {
+        // this.type = type;
+        // }
     }
 
     // meta categories that Tags belong to
-    public enum Type {
-        PLAYER,
-        // GAME_OBJECT?
-    }
+    // public enum Type {
+    // PLAYER,
+    // // GAME_OBJECT?
+    // }
 }

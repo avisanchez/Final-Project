@@ -1,16 +1,22 @@
 package core.gameobjects;
 
 import java.awt.Graphics;
+import java.io.Serializable;
+import java.util.UUID;
 import java.awt.Color;
 
 import core.mydatastructs.Vector3;
 import core.Settings;
 
-public abstract class GameObject {
+public abstract class GameObject implements Serializable {
     public Vector3 worldPos;
+    public int textureNum;
+    public UUID id;
 
-    public GameObject(double worldX, double worldY) {
+    public GameObject(UUID id, double worldX, double worldY, int textureNum) {
         worldPos = new Vector3(worldX, worldY, 0);
+        this.textureNum = textureNum;
+        this.id = id;
     }
 
     /**
@@ -29,6 +35,21 @@ public abstract class GameObject {
 
         g.setColor(Color.red);
         g.fillOval((int) (screenPos.x - rad), (int) (screenPos.y - rad), diam, diam);
+    }
+
+    public abstract String toString();
+
+    public abstract GameObject copy();
+
+    @Override
+    /**
+     * Checks for equality using UUID values
+     */
+    public boolean equals(Object otherGameObject) {
+        if (!(otherGameObject instanceof GameObject)) {
+            return false;
+        }
+        return this.id.equals(((GameObject) otherGameObject).id);
     }
 
 }

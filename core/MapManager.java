@@ -1,11 +1,13 @@
 package core;
 
 import java.awt.Graphics;
+import java.io.Serializable;
 import java.awt.Color;
 
 import core.gameobjects.*;
+import core.mydatastructs.*;
 
-public class MapManager {
+public class MapManager implements Serializable {
     public static final int[][] worldMap = new int[][] {
             { 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 7, 7, 7, 7, 7, 7, 7, 7 },
             { 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 7 },
@@ -33,7 +35,7 @@ public class MapManager {
             { 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3 }
     };
 
-    public void drawMinimap(Graphics g, GameObject... players) {
+    public static void drawMinimap(Graphics g, Player player, MyArrayList<Player> otherPlayers) {
         int cellSize = (int) (Settings.MINIMAP_SCALE * Settings.CELL_SIZE);
 
         // render cells
@@ -52,13 +54,16 @@ public class MapManager {
         }
 
         // render player(s)
-        for (GameObject player : players) {
-            player.draw(g);
+        for (Player p : otherPlayers) {
 
-            if (player instanceof Player) {
-                ((Player) player).drawFOV(g);
-            }
+            p.draw(g);
+            p.drawFOV(g);
+
         }
+
+        g.setColor(Color.yellow);
+        player.draw(g);
+        player.drawFOV(g);
 
     }
 }

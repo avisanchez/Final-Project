@@ -22,7 +22,10 @@ public class Client {
 
             sc.setBackground(Color.black);
 
-            sc.animate();
+            ScreenAnimator screenAnimator = new ScreenAnimator(sc);
+            Thread animationThread = new Thread(screenAnimator);
+            animationThread.start();
+
             sc.poll();
 
             // close this window without affecting other clients
@@ -37,4 +40,33 @@ public class Client {
         }
 
     }
+}
+
+class ScreenAnimator implements Runnable {
+    Screen target;
+
+    public ScreenAnimator(Screen target) {
+        this.target = target;
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            if (Thread.interrupted()) {
+                break;
+            }
+
+            // run game at ~ 60 fps
+            try {
+                Thread.sleep((long) 16.66);
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+
+            }
+            target.repaint();
+
+        }
+    }
+
 }
