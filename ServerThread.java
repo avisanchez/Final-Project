@@ -1,7 +1,6 @@
 import java.net.*;
 import java.io.*;
 
-import core.gameobjects.Player;
 import core.mydatastructs.*;
 
 public class ServerThread implements Runnable {

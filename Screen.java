@@ -21,21 +21,18 @@ public class Screen extends JPanel implements ActionListener, KeyListener {
     private JButton enterGameButton;
 
     // game objects
-    private Game game;
     private Renderer renderer;
-    private ObjectManager objectManager;
 
-    private Player currentPlayer;
+    private Player player;
     private MyArrayList<Player> otherPlayers;
 
     private int maxFPS, turning, moving;
     private double deltaTime, startTime;
+    private Pair<Double, Integer> avgFPS = new Pair<Double, Integer>(0.0, 0);
 
     private String username;
 
     public Screen(Socket server) {
-        objectManager = new ObjectManager();
-
         maxFPS = 0;
         turning = moving = 0;
         startTime = deltaTime = 0;
@@ -71,8 +68,12 @@ public class Screen extends JPanel implements ActionListener, KeyListener {
 
     }
 
+    public boolean readyToRepaint = true;
+
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+
+        readyToRepaint = false;
 
         if (username == null) {
             drawTitleScreen(g);
@@ -93,11 +94,11 @@ public class Screen extends JPanel implements ActionListener, KeyListener {
 
         // move player
         if (turning != 0) {
-            currentPlayer.turn(turning * Math.PI / 1.5 * deltaTime);
+            player.turn(turning * Math.PI / 1.5 * deltaTime);
 
         }
         if (moving != 0) {
-            currentPlayer.move(moving * 2.5 * deltaTime);
+            player.move(moving * 2.5 * deltaTime);
 
         }
 
@@ -105,21 +106,26 @@ public class Screen extends JPanel implements ActionListener, KeyListener {
         if (turning != 0 || moving != 0) {
             try {
                 out.reset();
-                out.writeObject(new Message(Message.Tag.UPDATE_PLAYER, currentPlayer));
+                out.writeObject(new Message(Message.Tag.UPDATE_PLAYER, player));
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
+        drawBackground(g);
+
+        // render game
         if (renderer != null) {
-            renderer.update(objectManager.getSortedPlayers(currentPlayer, otherPlayers));
-            renderer.render(g);
-            MapManager.drawMinimap(g, currentPlayer, otherPlayers);
+            renderer.render(g, otherPlayers);
         }
+        MapManager.drawMinimap(g, player, otherPlayers);
 
         // draw fps
         g.setColor(Color.RED);
         g.drawString("FPS: " + fps, 10, 20);
+
+        avgFPS._0 += fps;
+        avgFPS._1++;
 
     }
 
@@ -135,33 +141,36 @@ public class Screen extends JPanel implements ActionListener, KeyListener {
                 switch (message.tag) {
                     case CREATE_PLAYER:
                         Player newPlayer = (Player) message.getData();
-                        otherPlayers.add(newPlayer.copy());
 
-                        System.out.println("other players: " + otherPlayers.toString());
+                        otherPlayers.add(newPlayer.copy());
                         break;
                     case ASSIGN_PLAYER:
                         UUID id = (UUID) message.getData();
+
                         Player tempPlayer = new Player(id, 0, 0, 0);
-                        currentPlayer = otherPlayers.get(tempPlayer).copy();
-                        otherPlayers.remove(tempPlayer);
-
-                        renderer = new Renderer(currentPlayer, objectManager);
-
-                        System.out.println("player: " + currentPlayer);
-                        System.out.println("other players: " + otherPlayers);
+                        player = otherPlayers.remove(tempPlayer).copy();
+                        renderer = new Renderer(player);
                         break;
                     case UPDATE_PLAYER:
-                        System.out.println("updated player");
-                        System.out.println("other players size: " + otherPlayers.size());
                         Player updatedPlayer = (Player) message.getData();
+                        if (updatedPlayer.equals(this.player)) {
+                            break;
+                        }
+
+                        boolean playerExists = false;
                         for (int i = 0; i < otherPlayers.size(); i++) {
 
                             if (otherPlayers.get(i).equals(updatedPlayer)) {
-                                System.out.println("player found");
                                 otherPlayers.set(i, updatedPlayer.copy());
+                                playerExists = true;
                                 break;
                             }
                         }
+                        if (!playerExists) {
+                            otherPlayers.add(updatedPlayer.copy());
+
+                        }
+
                         break;
                     default:
                         break;
@@ -227,6 +236,7 @@ public class Screen extends JPanel implements ActionListener, KeyListener {
         // }
         else if (keyCode == KeyEvent.VK_SPACE) {
             System.out.println("Max FPS: " + maxFPS);
+            System.out.println("Avg FPS: " + (avgFPS._0 / (1.0 * avgFPS._1)));
 
         }
 
@@ -276,6 +286,14 @@ public class Screen extends JPanel implements ActionListener, KeyListener {
         g.setFont(new Font("serif", Font.PLAIN, 40));
         int titleWidth = g.getFontMetrics(g.getFont()).stringWidth("Spellcaster 3D");
         g.drawString("Spellcaster 3D", getCenteredX(titleWidth), 200);
+    }
+
+    public void drawBackground(Graphics g) {
+        g.setColor(new Color(56, 56, 56));
+        g.fillRect(0, 0, Settings.SCREEN_WIDTH, Settings.SCREEN_HEIGHT / 2);
+
+        g.setColor(new Color(112, 112, 112));
+        g.fillRect(0, Settings.SCREEN_HEIGHT / 2, Settings.SCREEN_WIDTH, Settings.SCREEN_HEIGHT / 2);
     }
 
 }

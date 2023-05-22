@@ -41,10 +41,10 @@ public abstract class GameObject implements Serializable {
 
     public abstract GameObject copy();
 
-    @Override
     /**
      * Checks for equality using UUID values
      */
+    @Override
     public boolean equals(Object otherGameObject) {
         if (!(otherGameObject instanceof GameObject)) {
             return false;

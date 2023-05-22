@@ -64,6 +64,7 @@ class ScreenAnimator implements Runnable {
                 e.printStackTrace();
 
             }
+
             target.repaint();
 
         }

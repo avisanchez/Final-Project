@@ -75,15 +75,15 @@ public class MyArrayList<E> implements Iterable<E>, Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    public void remove(E element) {
+    public E remove(E element) {
         for (int i = 0; i < size; i++) {
             E curr = (E) list[i];
 
             if (curr.equals(element)) {
-                remove(i);
-                break;
+                return remove(i);
             }
         }
+        return null;
     }
 
     public void set(int index, E newElement) {
