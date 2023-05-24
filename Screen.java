@@ -7,39 +7,31 @@ import java.util.UUID;
 
 import core.*;
 import core.Renderer;
-import core.gameobjects.Player;
-import core.mydatastructs.*;
+import core.gameobject.Player;
+import core.mydatastruct.*;
 
-public class Screen extends JPanel implements ActionListener, KeyListener {
+public class Screen extends JPanel implements ActionListener {
 
     // io streams
     private ObjectOutputStream out;
     private ObjectInputStream in;
 
+    // game handlers
+    private Renderer renderer;
+    private ScreenAnimator screenAnimator;
+
+    // game objects
+    private Player player;
+    private MyArrayList<Player> otherPlayers;
+
     // jcomponents
     private JTextField usernameField;
     private JButton enterGameButton;
 
-    // game objects
-    private Renderer renderer;
-
-    private Player player;
-    private MyArrayList<Player> otherPlayers;
-
-    private int maxFPS, turning, moving;
-    private double deltaTime, startTime;
-    private Pair<Double, Integer> avgFPS = new Pair<Double, Integer>(0.0, 0);
-
     private String username;
 
     public Screen(Socket server) {
-        maxFPS = 0;
-        turning = moving = 0;
-        startTime = deltaTime = 0;
-
         otherPlayers = new MyArrayList<>();
-
-        username = null;
 
         // Connect to server
         try {
@@ -64,46 +56,26 @@ public class Screen extends JPanel implements ActionListener, KeyListener {
 
         setLayout(null);
         setFocusable(true);
-        addKeyListener(this);
+
+        // start animation loop
+        screenAnimator = new ScreenAnimator(this);
+        Thread animationThread = new Thread(screenAnimator);
+        animationThread.start();
 
     }
 
-    public boolean readyToRepaint = true;
-
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-
-        readyToRepaint = false;
 
         if (username == null) {
             drawTitleScreen(g);
             return;
         }
 
-        // update delta time
-        deltaTime = (System.currentTimeMillis() - startTime) / 1000.0;
-        startTime = System.currentTimeMillis();
+        if (player.inMotion()) {
+            player.update(screenAnimator.getDeltaTime());
 
-        // update fps
-        int fps = (int) (1.0 / deltaTime);
-
-        // calculate max fps
-        if (fps > maxFPS) {
-            maxFPS = fps;
-        }
-
-        // move player
-        if (turning != 0) {
-            player.turn(turning * Math.PI / 1.5 * deltaTime);
-
-        }
-        if (moving != 0) {
-            player.move(moving * 2.5 * deltaTime);
-
-        }
-
-        // update player coordinates in object manager
-        if (turning != 0 || moving != 0) {
+            // send out updated player info
             try {
                 out.reset();
                 out.writeObject(new Message(Message.Tag.UPDATE_PLAYER, player));
@@ -112,20 +84,18 @@ public class Screen extends JPanel implements ActionListener, KeyListener {
             }
         }
 
-        drawBackground(g);
-
         // render game
         if (renderer != null) {
             renderer.render(g, otherPlayers);
         }
+
+        //
         MapManager.drawMinimap(g, player, otherPlayers);
 
         // draw fps
         g.setColor(Color.RED);
-        g.drawString("FPS: " + fps, 10, 20);
-
-        avgFPS._0 += fps;
-        avgFPS._1++;
+        g.drawString("FPS: " + screenAnimator.getFPS(), 10, 20);
+        g.drawString("Avg FPS: " + screenAnimator.getAvgFPS(), 10, 40);
 
     }
 
@@ -145,11 +115,15 @@ public class Screen extends JPanel implements ActionListener, KeyListener {
                         otherPlayers.add(newPlayer.copy());
                         break;
                     case ASSIGN_PLAYER:
-                        UUID id = (UUID) message.getData();
+                        UUID idToAssign = (UUID) message.getData();
 
-                        Player tempPlayer = new Player(id, 0, 0, 0);
+                        Player tempPlayer = new Player(idToAssign, 0, 0, 0);
                         player = otherPlayers.remove(tempPlayer).copy();
                         renderer = new Renderer(player);
+
+                        addKeyListener(player);
+                        addMouseListener(player);
+                        addMouseMotionListener(player);
                         break;
                     case UPDATE_PLAYER:
                         Player updatedPlayer = (Player) message.getData();
@@ -164,13 +138,19 @@ public class Screen extends JPanel implements ActionListener, KeyListener {
                                 otherPlayers.set(i, updatedPlayer.copy());
                                 playerExists = true;
                                 break;
+
                             }
                         }
                         if (!playerExists) {
                             otherPlayers.add(updatedPlayer.copy());
 
                         }
-
+                        break;
+                    case DELETE_PLAYER:
+                        UUID idToDelete = (UUID) message.getData();
+                        Player playerToDelete = new Player(idToDelete, 0, 0, 0);
+                        otherPlayers.remove(playerToDelete);
+                        System.out.println("other players size: " + otherPlayers.size());
                         break;
                     default:
                         break;
@@ -196,65 +176,6 @@ public class Screen extends JPanel implements ActionListener, KeyListener {
             usernameField.setVisible(false);
             enterGameButton.setVisible(false);
 
-        }
-
-        repaint();
-    }
-
-    // -----------------------------------
-    // ----------- Key Listener ----------
-    // -----------------------------------
-
-    public void keyPressed(KeyEvent e) {
-        int keyCode = e.getKeyCode();
-
-        if (keyCode == KeyEvent.VK_D) {
-            turning = -1;
-
-        } else if (keyCode == KeyEvent.VK_A) {
-            turning = 1;
-
-        } else if (keyCode == KeyEvent.VK_W) {
-            moving = 1;
-
-        } else if (keyCode == KeyEvent.VK_S) {
-            moving = -1;
-        }
-
-        // } else if (keyCode == KeyEvent.VK_UP) {
-        // player.dir = player.dir.mult(1.1);
-
-        // } else if (keyCode == KeyEvent.VK_DOWN) {
-        // player.dir = player.dir.mult(0.9);
-
-        // } else if (keyCode == KeyEvent.VK_LEFT) {
-        // player.cameraPlane = player.cameraPlane.mult(1.1);
-
-        // } else if (keyCode == KeyEvent.VK_RIGHT) {
-        // player.cameraPlane = player.cameraPlane.mult(0.9);
-
-        // }
-        else if (keyCode == KeyEvent.VK_SPACE) {
-            System.out.println("Max FPS: " + maxFPS);
-            System.out.println("Avg FPS: " + (avgFPS._0 / (1.0 * avgFPS._1)));
-
-        }
-
-        repaint();
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        int keyCode = e.getKeyCode();
-
-        if (keyCode == KeyEvent.VK_D || keyCode == KeyEvent.VK_A) {
-            turning = 0;
-        } else if (keyCode == KeyEvent.VK_W || keyCode == KeyEvent.VK_S) {
-            moving = 0;
         }
 
         repaint();

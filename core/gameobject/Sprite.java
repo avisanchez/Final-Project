@@ -1,4 +1,4 @@
-package core.gameobjects;
+package core.gameobject;
 
 import java.util.UUID;
 

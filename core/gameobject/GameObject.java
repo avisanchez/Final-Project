@@ -1,11 +1,11 @@
-package core.gameobjects;
+package core.gameobject;
 
 import java.awt.Graphics;
 import java.io.Serializable;
 import java.util.UUID;
 import java.awt.Color;
 
-import core.mydatastructs.Vector3;
+import core.mydatastruct.Vector3;
 import core.Settings;
 
 public abstract class GameObject implements Serializable {

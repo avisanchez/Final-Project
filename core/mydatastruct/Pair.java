@@ -1,4 +1,4 @@
-package core.mydatastructs;
+package core.mydatastruct;
 
 public class Pair<K, V> {
     public K _0;

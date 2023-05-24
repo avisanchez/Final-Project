@@ -1,4 +1,4 @@
-package core.mydatastructs;
+package core.mydatastruct;
 
 import java.awt.Graphics;
 import java.io.Serializable;

@@ -1,7 +1,9 @@
-import core.mydatastructs.*;
-import core.gameobjects.*;
-import core.MapManager;
 import java.net.Socket;
+
+import core.mydatastruct.*;
+import core.gameobject.*;
+import core.MapManager;
+
 import java.util.UUID;
 
 public class Manager {
@@ -22,32 +24,24 @@ public class Manager {
 
         // create player random position
         UUID id = UUID.randomUUID();
-        double newPlayerX, newPlayerY;
+        int worldX = (int) (Math.random() * MapManager.worldMap.length);
+        int worldY = (int) (Math.random() * MapManager.worldMap.length);
 
-        int x = (int) (Math.random() * MapManager.worldMap.length);
-        int y = (int) (Math.random() * MapManager.worldMap.length);
-        while (MapManager.worldMap[x][y] != 0) {
-            x = (int) (Math.random() * MapManager.worldMap.length);
-            y = (int) (Math.random() * MapManager.worldMap.length);
+        while (MapManager.worldMap[worldY][worldX] > 0) {
+            worldX = (int) (Math.random() * MapManager.worldMap.length);
+            worldY = (int) (Math.random() * MapManager.worldMap.length);
         }
-        newPlayerX = x + 0.5;
-        newPlayerY = y + 0.5;
+        worldX += 0.5;
+        worldY += 0.5;
 
-        // send the game to the screen
-        broadcastMessage(new Message(Message.Tag.CREATE_PLAYER, new Player(id, newPlayerX, newPlayerY, 8)));
+        broadcastMessage(new Message(Message.Tag.CREATE_PLAYER, new Player(id, worldX, worldY, 8)));
         connection.sendToClient(new Message(Message.Tag.ASSIGN_PLAYER, id));
 
     }
 
-    // public void removeClient(ServerThread serverThread) {
-    // game.getObjectManager().destoryPlayer(threadDict.get(serverThread));
-
-    // threadDict.remove(serverThread);
-
-    // System.out.println("num threads: " + threadDict.size());
-    // System.out.println("num players: " + threadDict.size());
-
-    // }
+    public void removeClient(ServerThread serverThread) {
+        threadList.remove(serverThread);
+    }
 
     public void broadcastMessage(Message message) {
         for (ServerThread thread : threadList) {

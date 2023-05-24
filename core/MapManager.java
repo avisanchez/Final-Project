@@ -1,11 +1,11 @@
 package core;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.io.Serializable;
-import java.awt.Color;
 
-import core.gameobjects.*;
-import core.mydatastructs.*;
+import core.gameobject.*;
+import core.mydatastruct.*;
 
 public class MapManager implements Serializable {
     public static final int[][] worldMap = new int[][] {
@@ -55,7 +55,6 @@ public class MapManager implements Serializable {
 
         // render player(s)
         for (Player p : otherPlayers) {
-
             p.draw(g);
             p.drawFOV(g);
 

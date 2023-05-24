@@ -1,4 +1,4 @@
-package core.mydatastructs;
+package core.mydatastruct;
 
 import java.io.Serializable;
 import java.util.Iterator;

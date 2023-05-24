@@ -1,42 +1,37 @@
 package core;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 
-import javax.imageio.ImageIO;
-
-import core.mydatastructs.*;
-import core.gameobjects.*;
+import core.mydatastruct.*;
+import core.gameobject.*;
 
 public class ObjectManager implements Serializable {
 
-    private static int[][] textures;
+    private static Texture[] textures;
 
     public ObjectManager() {
-        textures = new int[9][Settings.TEXTURE_WIDTH * Settings.TEXTURE_HEIGHT];
+        textures = new Texture[9];
 
         // load textures
         try {
-            String texturePath = "core/resources/textures/";
-            String spritePath = "core/resources/sprites/";
-            loadTexture(0, new File(texturePath + "bluestone.png"));
-            loadTexture(1, new File(texturePath + "colorstone.png"));
-            loadTexture(2, new File(texturePath + "eagle.png"));
-            loadTexture(3, new File(texturePath + "greystone.png"));
-            loadTexture(4, new File(texturePath + "mossy.png"));
-            loadTexture(5, new File(texturePath + "purplestone.png"));
-            loadTexture(6, new File(texturePath + "redbrick.png"));
-            loadTexture(7, new File(texturePath + "wood.png"));
-            loadTexture(8, new File(spritePath + "player.png"));
-
+            String texturePath = "core/resource/texture/";
+            String spritePath = "core/resource/sprite/";
+            textures[0] = new Texture(texturePath + "bluestone.png");
+            textures[1] = new Texture(texturePath + "colorstone.png");
+            textures[2] = new Texture(texturePath + "eagle.png");
+            textures[3] = new Texture(texturePath + "greystone.png");
+            textures[4] = new Texture(texturePath + "mossy.png");
+            textures[5] = new Texture(texturePath + "purplestone.png");
+            textures[6] = new Texture(texturePath + "redbrick.png");
+            textures[7] = new Texture(texturePath + "wood.png");
+            textures[8] = new Texture(spritePath + "player.png");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public int[] getTexture(int textureNum) {
+    public Texture getTexture(int textureNum) {
         if (textureNum < 0 || textureNum > textures.length) {
             System.out.println("Error: texture " + textureNum + " not detected");
         }
@@ -61,21 +56,6 @@ public class ObjectManager implements Serializable {
         }
 
         return sortedPlayer;
-    }
-
-    private void loadTexture(int index, File file) throws IOException {
-        BufferedImage image = ImageIO.read(file);
-
-        int width = image.getWidth();
-        int height = image.getHeight();
-
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                int pixelColor = image.getRGB(x, y);
-                textures[index][Settings.TEXTURE_WIDTH * x + y] = pixelColor;
-            }
-        }
-
     }
 
 }

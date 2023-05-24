@@ -1,12 +1,15 @@
 import java.net.*;
 import java.io.*;
 
-import core.mydatastructs.*;
+import java.util.UUID;
+import core.mydatastruct.Message;
 
 public class ServerThread implements Runnable {
     private Manager manager;
     private ObjectOutputStream out;
     private ObjectInputStream in;
+
+    private UUID id;
 
     public ServerThread(Socket client, Manager manager) {
         this.manager = manager;
@@ -36,7 +39,6 @@ public class ServerThread implements Runnable {
                     case UPDATE_PLAYER:
                         manager.broadcastMessage(message);
                         break;
-
                     default:
                         break;
                 }
@@ -53,6 +55,7 @@ public class ServerThread implements Runnable {
         }
 
         System.out.println(Thread.currentThread().getName() + ": connection closed.");
+        manager.removeClient(this);
 
         // close streams
         try {
@@ -61,6 +64,9 @@ public class ServerThread implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        // delete player
+        manager.broadcastMessage(new Message(Message.Tag.DELETE_PLAYER, id));
 
     }
 
@@ -72,6 +78,11 @@ public class ServerThread implements Runnable {
      */
     public void sendToClient(Message message) {
         try {
+
+            if (message.tag == Message.Tag.ASSIGN_PLAYER) {
+                id = (UUID) message.getData();
+            }
+
             out.reset();
             out.writeObject(message);
 

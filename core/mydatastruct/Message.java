@@ -1,4 +1,4 @@
-package core.mydatastructs;
+package core.mydatastruct;
 
 import java.io.Serializable;
 
@@ -30,22 +30,12 @@ public class Message implements Serializable {
         return data;
     }
 
-    // specific states of a certain Type
     public enum Tag {
         CREATE_PLAYER,
         ASSIGN_PLAYER,
         UPDATE_PLAYER,
+        DELETE_PLAYER,
 
-        // public Type type;
-
-        // private Tag(Type type) {
-        // this.type = type;
-        // }
     }
 
-    // meta categories that Tags belong to
-    // public enum Type {
-    // PLAYER,
-    // // GAME_OBJECT?
-    // }
 }

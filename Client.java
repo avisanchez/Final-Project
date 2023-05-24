@@ -1,7 +1,11 @@
 import javax.swing.*;
 
 import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.*;
 
@@ -20,11 +24,14 @@ public class Client {
             fr.setVisible(true);
             fr.setResizable(false);
 
-            sc.setBackground(Color.black);
+            // Create a new blank cursor.
+            // BufferedImage cursorImg = new BufferedImage(16, 16,
+            // BufferedImage.TYPE_INT_ARGB);
+            // Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
+            // cursorImg, new Point(0, 0), "blank cursor");
+            // fr.getContentPane().setCursor(blankCursor);
 
-            ScreenAnimator screenAnimator = new ScreenAnimator(sc);
-            Thread animationThread = new Thread(screenAnimator);
-            animationThread.start();
+            sc.setBackground(Color.black);
 
             sc.poll();
 
@@ -40,34 +47,4 @@ public class Client {
         }
 
     }
-}
-
-class ScreenAnimator implements Runnable {
-    Screen target;
-
-    public ScreenAnimator(Screen target) {
-        this.target = target;
-    }
-
-    @Override
-    public void run() {
-        while (true) {
-            if (Thread.interrupted()) {
-                break;
-            }
-
-            // run game at ~ 60 fps
-            try {
-                Thread.sleep((long) 16.66);
-
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-
-            }
-
-            target.repaint();
-
-        }
-    }
-
 }
