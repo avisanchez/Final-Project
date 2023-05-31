@@ -8,13 +8,13 @@ public class Message implements Serializable {
     private String metadata;
     private Serializable data;
 
-    public Message(Tag tag, String metadata, Serializable data) {
+    public Message(Tag tag, String metadata, String data) {
         this.tag = tag;
         this.metadata = metadata;
         this.data = data;
     }
 
-    public Message(Tag tag, Serializable data) {
+    public Message(Tag tag, String data) {
         this(tag, "", data);
     }
 
@@ -35,6 +35,9 @@ public class Message implements Serializable {
         ASSIGN_PLAYER,
         UPDATE_PLAYER,
         DELETE_PLAYER,
+        KILL_PLAYER,
+
+        START_COUNTDOWN
 
     }
 

@@ -1,23 +1,19 @@
 import javax.swing.*;
 
 import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.*;
 
 public class Client {
     public static void main(String[] args) {
-        String hostName = "localhost"; // ip address
+        String hostName = "10.210.84.28"; // ip address
         int port = Server.PORT;
         try {
             Socket server = new Socket(hostName, port);
 
             JFrame fr = new JFrame("Client");
-            Screen sc = new Screen(server);
+            Screen sc = new Screen(server, fr);
             fr.add(sc);
             fr.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             fr.pack();

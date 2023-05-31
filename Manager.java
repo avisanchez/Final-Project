@@ -34,8 +34,10 @@ public class Manager {
         worldX += 0.5;
         worldY += 0.5;
 
-        broadcastMessage(new Message(Message.Tag.CREATE_PLAYER, new Player(id, worldX, worldY, 8)));
-        connection.sendToClient(new Message(Message.Tag.ASSIGN_PLAYER, id));
+        String idAsString = id.toString();
+        String newPlayerAsString = idAsString + "," + worldX + "," + worldY + "," + 8;
+        broadcastMessage(new Message(Message.Tag.CREATE_PLAYER, newPlayerAsString));
+        connection.sendToClient(new Message(Message.Tag.ASSIGN_PLAYER, idAsString));
 
     }
 
@@ -49,4 +51,5 @@ public class Manager {
 
         }
     }
+
 }

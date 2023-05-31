@@ -1,6 +1,5 @@
 package core;
 
-import java.io.IOException;
 import java.io.Serializable;
 
 import core.mydatastruct.*;
@@ -8,27 +7,34 @@ import core.gameobject.*;
 
 public class ObjectManager implements Serializable {
 
+    public static final String texturePath = "core/resource/texture/";
+    public static final String spritePath = "core/resource/sprite/";
+    public static final String soundPath = "core/resource/sound/";
+
     private static Texture[] textures;
+    private static Sound[] sounds;
 
     public ObjectManager() {
         textures = new Texture[9];
+        sounds = new Sound[3];
 
         // load textures
-        try {
-            String texturePath = "core/resource/texture/";
-            String spritePath = "core/resource/sprite/";
-            textures[0] = new Texture(texturePath + "bluestone.png");
-            textures[1] = new Texture(texturePath + "colorstone.png");
-            textures[2] = new Texture(texturePath + "eagle.png");
-            textures[3] = new Texture(texturePath + "greystone.png");
-            textures[4] = new Texture(texturePath + "mossy.png");
-            textures[5] = new Texture(texturePath + "purplestone.png");
-            textures[6] = new Texture(texturePath + "redbrick.png");
-            textures[7] = new Texture(texturePath + "wood.png");
-            textures[8] = new Texture(spritePath + "player.png");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        textures[0] = new Texture(texturePath + "bluestone.png");
+        textures[1] = new Texture(texturePath + "colorstone.png");
+        textures[2] = new Texture(texturePath + "eagle.png");
+        textures[3] = new Texture(texturePath + "greystone.png");
+        textures[4] = new Texture(texturePath + "mossy.png");
+        textures[5] = new Texture(texturePath + "purplestone.png");
+        textures[6] = new Texture(texturePath + "redbrick.png");
+        textures[7] = new Texture(texturePath + "wood.png");
+        textures[8] = new Texture(spritePath + "player.png");
+
+        String soundPath = "core/resource/sound/";
+        // sounds[0] = new Sound(soundPath + "footstep.wav");
+        // sounds[1] = new Sound(soundPath + "killconfirm.wav");
+        // sounds[2] = new Sound(soundPath + "zap.wav");
+
     }
 
     public Texture getTexture(int textureNum) {

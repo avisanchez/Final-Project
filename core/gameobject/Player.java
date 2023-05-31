@@ -1,49 +1,32 @@
 package core.gameobject;
 
+import java.io.Serializable;
+
 import java.awt.AWTException;
 import java.awt.Graphics;
 import java.awt.Robot;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.util.UUID;
 
 import core.mydatastruct.Vector3;
 import core.Settings;
 
-public class Player extends GameObject implements KeyListener, MouseListener, MouseMotionListener {
+public class Player extends GameObject implements Serializable {
     private int moveDir, turnDir;
 
     public Vector3 dir;
     public Vector3 cameraPlane;
-
-    private transient Robot robot;
 
     public Player(UUID id, double worldX, double worldY, int textureNum) {
         super(id, worldX, worldY, textureNum);
 
         dir = new Vector3(-1, 0, 0);
         cameraPlane = new Vector3(0, 0.66, 0);
-
-        try {
-            robot = new Robot();
-        } catch (AWTException e) {
-            e.printStackTrace();
-        }
     }
 
     private Player(UUID id, Vector3 worldPos, Vector3 dir, Vector3 cameraPlane, int textureNum) {
         super(id, worldPos.x, worldPos.y, textureNum);
         this.dir = dir;
         this.cameraPlane = cameraPlane;
-
-        try {
-            robot = new Robot();
-        } catch (AWTException e) {
-            e.printStackTrace();
-        }
     }
 
     public void update(double deltaTime) {
@@ -106,6 +89,14 @@ public class Player extends GameObject implements KeyListener, MouseListener, Mo
         Vector3.drawLine2D(g, screenPos, rightPoint);
     }
 
+    public void setTurnDir(int turnDir) {
+        this.turnDir = turnDir;
+    }
+
+    public void setMoveDir(int moveDir) {
+        this.moveDir = moveDir;
+    }
+
     /**
      * Indicates whether the player is currently moving or rotating
      * 
@@ -125,72 +116,4 @@ public class Player extends GameObject implements KeyListener, MouseListener, Mo
         return new Player(id, worldPos.copy(), dir.copy(), cameraPlane.copy(), textureNum);
     }
 
-    @Override
-    public void keyPressed(KeyEvent e) {
-        int keyCode = e.getKeyCode();
-        if (keyCode == KeyEvent.VK_A)
-            turnDir = 1;
-        if (keyCode == KeyEvent.VK_D)
-            turnDir = -1;
-        if (keyCode == KeyEvent.VK_W)
-            moveDir = 1;
-        if (keyCode == KeyEvent.VK_S)
-            moveDir = -1;
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        int keyCode = e.getKeyCode();
-        if (keyCode == KeyEvent.VK_A)
-            turnDir = 0;
-        if (keyCode == KeyEvent.VK_D)
-            turnDir = 0;
-        if (keyCode == KeyEvent.VK_W)
-            moveDir = 0;
-        if (keyCode == KeyEvent.VK_S)
-            moveDir = 0;
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    private int mouseX;
-    private int mouseDelta;
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-        System.out.println("mouse exited");
-
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent e) {
-
-    }
 }

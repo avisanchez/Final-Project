@@ -39,13 +39,16 @@ public class ServerThread implements Runnable {
                     case UPDATE_PLAYER:
                         manager.broadcastMessage(message);
                         break;
+                    case KILL_PLAYER:
+                        manager.broadcastMessage(message);
+                        break;
                     default:
                         break;
                 }
             }
 
         } catch (IOException ex) {
-            System.out.println("ERROR: Failed to get message from cliet.");
+            System.out.println("ERROR: Failed to get message from client.");
             ex.printStackTrace();
 
         } catch (ClassNotFoundException ex) {
@@ -66,7 +69,7 @@ public class ServerThread implements Runnable {
         }
 
         // delete player
-        manager.broadcastMessage(new Message(Message.Tag.DELETE_PLAYER, id));
+        manager.broadcastMessage(new Message(Message.Tag.DELETE_PLAYER, id.toString()));
 
     }
 
@@ -80,7 +83,7 @@ public class ServerThread implements Runnable {
         try {
 
             if (message.tag == Message.Tag.ASSIGN_PLAYER) {
-                id = (UUID) message.getData();
+                id = UUID.fromString(((String) message.getData()).split(",")[0]);
             }
 
             out.reset();
